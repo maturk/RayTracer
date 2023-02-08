@@ -6,6 +6,7 @@
 
 // Common primitive typedefs
 typedef Eigen::Matrix<float, 3, 1> Point3f;
+typedef Eigen::Matrix<float, 3, 1> Vector3f;
 typedef Eigen::Matrix<float, 3, 1> Color;
 
 
