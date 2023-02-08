@@ -1,15 +1,16 @@
 # This is the main CMake build file used to complile my RayTracer program
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.2)
 
 # Set the C++ standard whose features are requested to build this target. C++11 required for dependencies ImGui 
 set(CMAKE_CXX_STANDARD 11)
-
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
-
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/ext/eigen/cmake/)
+set(EIGEN3_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext/eigen)
+find_package (Eigen3 3.3 REQUIRED)
 project(RayTracer)
 
 # Include exteral libraries
-include_directories(ext)
+include_directories(ext/
+SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 # Main program
 
@@ -33,5 +34,5 @@ list(APPEND NGP_INCLUDE_DIRECTORIES
 )
 
 # Link Targets
-target_link_libraries(${PROJECT_NAME} PUBLIC ImGui Eigen3::Eigen
+target_link_libraries(${PROJECT_NAME} PUBLIC ImGui 
 )
