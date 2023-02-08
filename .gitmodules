@@ -1,3 +1,6 @@
 [submodule "ext/eigen"]
 	path = ext/eigen
 	url = https://github.com/libigl/eigen
+[submodule "ext/imgui"]
+	path = ext/imgui
+	url = https://github.com/ocornut/imgui.git
