@@ -3,9 +3,14 @@ cmake_minimum_required(VERSION 3.2)
 
 # Set the C++ standard whose features are requested to build this target. C++11 required for dependencies ImGui 
 set(CMAKE_CXX_STANDARD 11)
+
+# Eigen 
+# Manually set Eigen paths to local Eigen folder
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/ext/eigen/cmake/)
 set(EIGEN3_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext/eigen)
 find_package (Eigen3 3.3 REQUIRED)
+
+# Project
 project(RayTracer)
 
 # Include exteral libraries
@@ -13,14 +18,10 @@ include_directories(ext/
 SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 # Main program
-
 file(GLOB SOURCES "src/*.cpp" "src/*.h")
-
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-
 # ImGui
-# Set ImGui file path
 set(IMGUI_PATH  "ext/imgui")
 
 # Compile ImGui as static library 
@@ -29,10 +30,6 @@ add_library("ImGui" STATIC ${IMGUI_SOURCES})
 target_include_directories("ImGui" PUBLIC ${IMGUI_PATH} ${IMGUI_PATH}/backends  ext/glfw/include  ext/glfw/deps PRIVATE ext/glfw/src 
 )
 
-list(APPEND NGP_INCLUDE_DIRECTORIES
-	ImGui
-)
-
 # Link Targets
-target_link_libraries(${PROJECT_NAME} PUBLIC ImGui 
+target_link_libraries(${PROJECT_NAME} PUBLIC ImGui
 )
