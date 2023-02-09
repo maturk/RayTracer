@@ -3,17 +3,17 @@
 
 #include "common.h"
 
-// Ray class
+RAYTRACER_NAMESPACE_BEGIN
 
-class ray {
+// Ray class
+class Ray {
     public:
-    ray(){}
-    ray(const Point3f& o, const Vector3f& d): origin(o), direction(d) {}
+    Ray(){}
+    Ray(const Point3f& o, const Vector3f& d): origin(o), direction(d.normalized()) {}
 
     // Constant "getter" member functions of ray. Cannot change data member values. 
-    Point3f origin() const {return origin;}
+    Point3f o() const {return origin;}
     Vector3f w() const {return direction;}
-
     Point3f at(float t) const { 
         return origin + t * direction;
     }
@@ -21,6 +21,7 @@ class ray {
     public:
     Point3f origin;
     Vector3f direction;
-}
+};
 
+RAYTRACER_NAMESPACE_END
 #endif

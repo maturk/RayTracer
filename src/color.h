@@ -2,8 +2,9 @@
 #define COLOR_H
 
 #include "common.h"
-
 #include <iostream>
+
+RAYTRACER_NAMESPACE_BEGIN
 
 void write_color(std::ostream &out, Color pixel_color) {
     // Write the translated [0,255] value of each color component.
@@ -14,4 +15,5 @@ void write_color(std::ostream &out, Color pixel_color) {
         << static_cast<int>(255.999 * pixel_color.z()) << '\n';
 }
 
+RAYTRACER_NAMESPACE_END
 #endif
