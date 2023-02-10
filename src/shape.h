@@ -14,9 +14,16 @@ struct hit_record{
     Vector3f n;
     // Ray t value
     float t;
+
+    bool front_face;
+
+    inline void set_face_normal(const Ray& r, const Vector3f& outward_normal) {
+        front_face = r.w().dot(outward_normal) < 0;
+        n = front_face ? outward_normal :-outward_normal;
+    }
 };
 
-// Abstract shape class
+// Abstract base shape class
 class Shape {
     public:
         virtual bool hit(const Ray& r, float t_min, float t_max, hit_record& rec) const = 0;

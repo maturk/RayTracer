@@ -3,6 +3,7 @@
 #include "common.h"
 #include "ray.h"
 #include "color.h"
+#include "sphere.h"
 
 RAYTRACER_NAMESPACE_BEGIN
 
