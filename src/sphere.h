@@ -8,10 +8,10 @@ RAYTRACER_NAMESPACE_BEGIN
 
 class Sphere : public Shape { // inherit all Shape member methods (public stay public and protected stay protected)
     public:
-        Sphere() : m_radius(1), m_center(Point3f(0,0,0)) {};
-        Sphere(float r, Point3f& center) : m_radius(r), m_center(center) {};
+        Sphere() {}
+        Sphere(Point3f center, float r) : m_radius(r), m_center(center) {};
 
-        bool hit(const Ray& ray, float t_min, float t_max, hit_record& rec) {
+        bool hit(const Ray& ray, float t_min, float t_max, hit_record& rec) const {
             Vector3f oc = ray.o() - m_center;
             auto a = ray.w().squaredNorm();
             auto half_b = oc.dot(ray.w());
@@ -35,6 +35,7 @@ class Sphere : public Shape { // inherit all Shape member methods (public stay p
 
             return true;
         }
+
     protected:
         float m_radius;
         Point3f m_center;

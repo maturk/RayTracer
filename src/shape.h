@@ -26,7 +26,7 @@ struct hit_record{
 // Abstract base shape class
 class Shape {
     public:
-        virtual bool hit(const Ray& r, float t_min, float t_max, hit_record& rec) const = 0;
+        virtual bool hit(const Ray& ray, float t_min, float t_max, hit_record& rec) const = 0;
 };
 
 RAYTRACER_NAMESPACE_END
