@@ -18,12 +18,14 @@ using std::sqrt;
 
 // Common primitive typedefs
 typedef Eigen::Matrix<float, 3, 1> Point3f;
+typedef Eigen::Matrix<float, 2, 1> Point2f;
 typedef Eigen::Matrix<float, 3, 1> Vector3f;
 typedef Eigen::Matrix<float, 3, 1> Color;
 
 // Constants
 const double M_INF = std::numeric_limits<double>::infinity();
 const double PI = 3.1415926535897932385;
+const double M_EPSILON = 0.001;
 
 // Utility Functions
 inline double degrees_to_radians(double degrees) {
@@ -35,6 +37,13 @@ inline double random() {
     static std::mt19937 generator;
     return distribution(generator);
 }
+
+inline double random(float min, float max) {
+    static std::uniform_real_distribution<float> distribution(min, max);
+    static std::mt19937 generator;
+    return distribution(generator);
+}
+
 
 inline double clamp(double x, double min, double max) {
     if (x < min) return min;
