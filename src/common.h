@@ -32,6 +32,7 @@ inline double degrees_to_radians(double degrees) {
     return degrees * M_PI / 180.0;
 }
 
+// Random number generators
 inline double random() {
     static std::uniform_real_distribution<float> distribution(0.0, 1.0);
     static std::mt19937 generator;
@@ -44,11 +45,16 @@ inline double random(float min, float max) {
     return distribution(generator);
 }
 
-
+// Clamp function
 inline double clamp(double x, double min, double max) {
     if (x < min) return min;
     if (x > max) return max;
     return x;
+}
+
+// Specular reflection equation
+Vector3f reflect(const Vector3f& v, const Vector3f& n) {
+    return v - 2*v.dot(n)*n;
 }
 
 RAYTRACER_NAMESPACE_END

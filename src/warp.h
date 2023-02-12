@@ -8,21 +8,21 @@ RAYTRACER_NAMESPACE_BEGIN
 class Warp {
     public:
     
-    inline static Vector3f sampleUniformHemisphere(Point3f sampler, const Vector3f &pole) {
+    inline static Vector3f sampleUniformHemisphere(const Vector3f &pole) {
         // Naive implementation using rejection sampling
         Vector3f v;
         do {
-            v.x() = 1.f - 2.f * sampler.x();
-            v.y() = 1.f - 2.f * sampler.y();
-            v.z() = 1.f - 2.f * sampler.z();
+            v.x() = 1.f - 2.f * raytracer::random();
+            v.y() = 1.f - 2.f * raytracer::random();
+            v.z() = 1.f - 2.f * raytracer::random();
         } while (v.squaredNorm() > 1.f);
 
         if (v.dot(pole) < 0.f)
             v = -v;
         v /= v.norm();
-
         return v;
     }
+    
     inline static Vector3f randomVector() {
         return Vector3f(raytracer::random(),raytracer::random(),raytracer::random());
     }

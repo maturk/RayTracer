@@ -6,17 +6,23 @@
 
 RAYTRACER_NAMESPACE_BEGIN
 
-void write_color(std::ostream &out, Color pixel_color, int samples_per_pixel) {
+void write_color(std::ostream &out, Color pixel_color, int samples_per_pixel, bool gamma) {
     auto r = pixel_color.x();
     auto g = pixel_color.y();
     auto b = pixel_color.z();
 
     // Divide the color by the number of samples and gamma-correct for gamma=2.0.
     auto scale = 1.0 / samples_per_pixel;
-    r = sqrt(scale * r);
-    g = sqrt(scale * g);
-    b = sqrt(scale * b);
-
+    if (gamma){
+        r = sqrt(scale * r);
+        g = sqrt(scale * g);
+        b = sqrt(scale * b);
+    }
+    else {
+        r = (scale * r);
+        g = (scale * g);
+        b = (scale * b);
+    }
     // Write the translated [0,255] value of each color component.
     // convert r,g,b to 255 range using static_cast
     // static_cast<type>

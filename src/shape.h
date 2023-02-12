@@ -6,6 +6,8 @@
 
 RAYTRACER_NAMESPACE_BEGIN
 
+class Material;
+
 // Shape hit record
 struct hit_record{
     // Surface point
@@ -14,6 +16,8 @@ struct hit_record{
     Vector3f n;
     // Ray t value
     float t;
+    // Material
+    shared_ptr<Material> mat_ptr;
 
     bool front_face;
 

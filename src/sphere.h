@@ -9,7 +9,10 @@ RAYTRACER_NAMESPACE_BEGIN
 class Sphere : public Shape { // inherit all Shape member methods (public stay public and protected stay protected)
     public:
         Sphere() {}
-        Sphere(Point3f center, float r) : m_radius(r), m_center(center) {};
+        Sphere(Point3f center, float r): m_radius(r), m_center(center) {};
+        Sphere(Point3f center, float r, shared_ptr<Material> m) 
+                                    : m_radius(r), m_center(center), mat_ptr(m) {};
+        
 
         bool hit(const Ray& ray, float t_min, float t_max, hit_record& rec) const {
             Vector3f oc = ray.o() - m_center;
@@ -32,6 +35,7 @@ class Sphere : public Shape { // inherit all Shape member methods (public stay p
             rec.t = root;
             rec.p = ray.at(rec.t);
             rec.n = (rec.p - m_center) / m_radius; // why not normalized
+            rec.mat_ptr = mat_ptr;
 
             return true;
         }
@@ -39,6 +43,7 @@ class Sphere : public Shape { // inherit all Shape member methods (public stay p
     protected:
         float m_radius;
         Point3f m_center;
+        shared_ptr<Material> mat_ptr;
 };
 
 RAYTRACER_NAMESPACE_END
