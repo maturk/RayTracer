@@ -16,7 +16,7 @@ struct hit_record{
     Vector3f n;
     // Ray t value
     float t;
-    // Material
+    // Pointer to hit material instance
     shared_ptr<Material> mat_ptr;
 
     bool front_face;

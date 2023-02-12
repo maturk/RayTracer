@@ -43,7 +43,7 @@ class Sphere : public Shape { // inherit all Shape member methods (public stay p
     protected:
         float m_radius;
         Point3f m_center;
-        shared_ptr<Material> mat_ptr;
+        shared_ptr<Material> mat_ptr; // material pointer (e.g. metal/lambertian)
 };
 
 RAYTRACER_NAMESPACE_END
