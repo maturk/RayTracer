@@ -22,7 +22,7 @@
 #ifdef linux
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <glut.h>
+//#include <glut.h>
 #include <stdlib.h>
 #endif
 
