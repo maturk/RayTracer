@@ -1,33 +1,7 @@
-// Bring in OpenGL
-// Windows
-#ifdef WIN32
-#include <windows.h> // Must have for Windows platform builds
-#include "glee.h" // OpenGL Extension "autoloader"
-#include <gl\gl.h> // Microsoft OpenGL headers
-#include <gl\glu.h> // OpenGL Utilities
-#include "glut.h"// Glut (Free-Glut on Windows)
-#endif
-
-// Mac OS X
-#ifdef __APPLE__
-#define GL_SILENCE_DEPRECATION // Defined before OpenGL and GLUT includes to avoid deprecation messages
-//#include <Carbon/Carbon.h> // Brings in most Apple specific stuff
-//#include <OpenGL/gl.h> // Apple OpenGL haders (version depends on OS X SDK version)
-//#include <OpenGL/glu.h> // OpenGL Utilities
-//#include <Glut/glut.h> // Apples Implementation of GLUT
-#define Sleep(x) // Just ignore sleep on Apple
-#endif
-
-// Linux
-#ifdef linux
-#include <GL/gl.h>
-#include <GL/glu.h>
-//#include <glut.h>
-#include <stdlib.h>
-#endif
+#include "gui.hpp"
 
 #include <GLFW/glfw3.h>
-//#include <OpenGL/gl3.h>
+#include <OpenGL/gl3.h> // required
 //#include <OpenGL/gl3ext.h>
 
 #include <iostream>
@@ -65,6 +39,20 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
+// Shaders
+const char *vertexShaderSource = "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "}\0";
+
+const char *fragmentShaderSource = "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "}\n\0";
 
 int main(){
     GLFWwindow* window;
@@ -79,14 +67,15 @@ int main(){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
     #ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
     #endif
     
     window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    glfwSwapInterval(1);
+    glfwSwapInterval(1); //vSync
 
     const GLubyte* renderer = glGetString(GL_RENDERER);
     const GLubyte* version = glGetString(GL_VERSION);
@@ -98,11 +87,13 @@ int main(){
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
 
-    // Setup Platform/Renderer bindings
+    // Setup ImGUI Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
+    
+    ImGui_ImplOpenGL3_NewFrame();
     
     glfwSetKeyCallback(window, key_callback);
     
@@ -112,38 +103,93 @@ int main(){
         exit(EXIT_FAILURE);
     }
 
+    // Vertex shader
+    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+    // check for shader compile errors
+    int success;
+    char infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+    // fragment shader
+    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+    // check for shader compile errors
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+    // link shaders
+    unsigned int shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    // check for linking errors
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+    }
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f
-    };  
+        -0.5f, -0.5f, 0.0f, // left  
+         0.5f, -0.5f, 0.0f, // right 
+         0.0f,  0.5f, 0.0f  // top   
+    }; 
+
+    unsigned int VBO, VAO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+
+    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+    glBindVertexArray(0); 
 
     while (!glfwWindowShouldClose(window)){
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        //ImGui_ImplGlfw_NewFrame();
-        //ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();
         processInput(window);
 
-        glBegin(GL_TRIANGLES);
-        glVertex2f(-0.5f, -0.5f);
-        glVertex2f(0.5f, 0.5f);
-        glVertex2f(0.5f, -0.5f);
-        glEnd();
-        //ImGui::NewFrame();
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
         // render your GUI
-        //ImGui::Begin("Demo window");
-        //ImGui::Button("Hello!");
-        //ImGui::End();
+        ImGui::NewFrame();  
+        ImGui::Begin("Menu");
+        ImGui::Text("My first triangle");
+        ImGui::End();
+        
+        // Render dear imgui into screen
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-         // Render dear imgui into screen
-        //ImGui::Render();
-        //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        int display_w, display_h;
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
         glfwSwapBuffers(window);
         glfwPollEvents();
 
@@ -163,9 +209,11 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GL_TRUE);
 }
