@@ -1,7 +1,7 @@
 #include "gui.hpp"
 
 #include <GLFW/glfw3.h>
-#include <OpenGL/gl3.h> // required
+//#include <OpenGL/gl3.h> // required
 //#include <OpenGL/gl3ext.h>
 
 #include <iostream>
