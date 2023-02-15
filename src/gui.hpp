@@ -9,6 +9,7 @@
 #include <gl\gl.h> // Microsoft OpenGL headers
 #include <gl\glu.h> // OpenGL Utilities
 #include "glut.h"// Glut (Free-Glut on Windows)
+#include <GL/glew.h>
 #endif
 
 // Mac OS X
@@ -17,18 +18,14 @@
 //#include <Carbon/Carbon.h> // Brings in most Apple specific stuff
 #include <OpenGL/gl.h> // Apple OpenGL haders (version depends on OS X SDK version)
 #include <OpenGL/gl3.h> // Required
-//#include <OpenGL/glu.h> // OpenGL Utilities
-//#include <Glut/glut.h> // Apples Implementation of GLUT
+#include <GL/glew.h>
 #define Sleep(x) // Just ignore sleep on Apple
 #endif
 
 // Linux
 #ifdef linux
-//#include <GL/gl.h>
-//include <GL/glu.h>
-#include <glad/glad.h>
-//#include <glut.h>
-#include <stdlib.h>
+#define GLEW_STATIC
+#include <GL/glew.h>
 #endif
 
 #endif

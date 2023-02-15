@@ -20,6 +20,7 @@ include_directories(ext/ include/ SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 add_subdirectory(ext/glfw)
 add_subdirectory(ext/glad)
+add_subdirectory(ext/glew-cmake)
 
 # Main program
 file(GLOB SOURCES "src/*.cpp" "src/*.h" "include/*")
@@ -42,5 +43,5 @@ target_include_directories("ImGui" PUBLIC ${IMGUI_PATH} ${IMGUI_PATH}/backends  
 target_link_libraries(${PROJECT_NAME} PUBLIC ImGui glfw glad ${OPENGL_LIBRARIES} ${GLUT_LIBRARY}
 )
 
-target_link_libraries("gui" PUBLIC glfw ImGui glad ${OPENGL_LIBRARIES} ${GLUT_LIBRARY}
+target_link_libraries("gui" PUBLIC glfw ImGui glad ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} libglew_static
 )

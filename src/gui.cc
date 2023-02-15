@@ -1,8 +1,6 @@
 #include "gui.hpp"
 
 #include <GLFW/glfw3.h>
-//#include <OpenGL/gl3.h> // required
-//#include <OpenGL/gl3ext.h>
 
 #include <iostream>
 #include <ostream>
@@ -102,7 +100,7 @@ int main(){
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
-
+    GLenum err = glewInit();
     // Vertex shader
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
