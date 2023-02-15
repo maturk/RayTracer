@@ -14,8 +14,8 @@
 // Mac OS X
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION // Defined before OpenGL and GLUT includes to avoid deprecation messages
-#include <Carbon/Carbon.h> // Brings in most Apple specific stuff
-//#include <OpenGL/gl.h> // Apple OpenGL haders (version depends on OS X SDK version)
+//#include <Carbon/Carbon.h> // Brings in most Apple specific stuff
+#include <OpenGL/gl.h> // Apple OpenGL haders (version depends on OS X SDK version)
 //#include <OpenGL/glu.h> // OpenGL Utilities
 //#include <Glut/glut.h> // Apples Implementation of GLUT
 #define Sleep(x) // Just ignore sleep on Apple

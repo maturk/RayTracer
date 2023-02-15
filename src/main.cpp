@@ -8,6 +8,7 @@
 #include "warp.h"
 #include "material.h"
 
+
 RAYTRACER_NAMESPACE_BEGIN
 
 Color ray_color(const Ray& r, const Shape& world, int depth) {

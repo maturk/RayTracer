@@ -16,17 +16,18 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 
 # Include exteral libraries
-include_directories(ext/ SYSTEM ${EIGEN3_INCLUDE_DIR})
+include_directories(ext/ include/ SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 add_subdirectory(ext/glfw)
 add_subdirectory(ext/glad)
 
 # Main program
-file(GLOB SOURCES "src/*.cpp" "src/*.h")
+file(GLOB SOURCES "src/*.cpp" "src/*.h" "include/*")
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Scratch progam
-add_executable("gui" src/gui.cc)
+file(GLOB GUI_SOURCES "src/*.cc" "src/*.hpp" "include/*")
+add_executable("gui" ${GUI_SOURCES} )
 
 # ImGui
 set(IMGUI_PATH  "ext/imgui")
