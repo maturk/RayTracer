@@ -44,8 +44,8 @@ class lambertian : public Material {
 // Specular metal material
 class metal : public Material {
     public:
-        metal(const Color& a) : albedo(a), fuzz(0) {}
-        metal(const Color& a, double f) : albedo(a), fuzz(f < 1 ? f : 1) {}
+        metal(const Color& a) : m_albedo(a), m_fuzz(0) {}
+        metal(const Color& a, double f) : m_albedo(a), m_fuzz(f < 1 ? f : 1) {}
 
         virtual bool scatter(
             const Ray& r_in, const hit_record& rec, Color& attenuation, Ray& scattered
@@ -54,14 +54,14 @@ class metal : public Material {
             // attenuation: factor to decrease radiosity
             // scattered: scattered ray due to reflection (possible fuzzed)
             Vector3f reflected = reflect((r_in.w()).normalized(), rec.n);
-            scattered = Ray(rec.p, reflected + fuzz * Warp::random_in_unit_sphere());
-            attenuation = albedo;
+            scattered = Ray(rec.p, reflected + m_fuzz * Warp::random_in_unit_sphere());
+            attenuation = m_albedo;
             return (scattered.w().dot(rec.n)) > 0;
         }
 
     public:
-        Color albedo;
-        double fuzz;
+        Color m_albedo;
+        double m_fuzz;
 };
 
 // Dielectric Material
