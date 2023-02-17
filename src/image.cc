@@ -1,5 +1,8 @@
-#include "common.h"
+#ifndef IMAGE_H
+#define IMAGE_H
+
 #include "gui.hpp"
+#include "common.hpp"
 #include <iostream>
 #include "stb_image.h"
 
@@ -9,13 +12,11 @@ OpenGL object steps:
 2. bind object
 */
 
-RAYTRACER_NAMESPACE_BEGIN
-
 class Image {
-
+    public:
     // Surface struct to hold image data
     struct Surface {
-        Vector3f* fb; // frame buffer. Consider using a render buffer instead... 
+        raytracer::Vector3f* fb; // frame buffer. Consider using a render buffer instead... 
         // (uint*)MALLOC64(w * h * sizeof(uint));
         uint* pixels;
         uint32_t width;
@@ -24,19 +25,17 @@ class Image {
     };
 
     Image():
-    _surface{nullptr, 0, 0} {
-        glGenFramebuffers(1 , &_fbo); // 1. generate fbo
-        glGenTextures(1 , &_texture); // 1. generate texture
-    }
-
-    public:
+        _surface{nullptr, 0, 0} {
+            glGenFramebuffers(1 , &_fbo); // 1. generate fbo
+            glGenTextures(1 , &_texture); // 1. generate texture
+        }
         Surface _surface;
         GLuint _fbo; // Frame buffer object
         GLuint _texture; // Texture that attaches to frame buffer
 
     void updateSettings(){
-        _surface.width = 400;
-        _surface.height = 225;
+        _surface.width = 1200;
+        _surface.height = 900;
         _surface.samples = 10;
 
         // Create new texture on gpu
@@ -64,12 +63,29 @@ class Image {
         glDeleteTextures(1 , &_texture); // Delete texture
     }
 
-    void LoadImage(const char* file, int width, int height)
-        {
-            int n;
+    Surface getSurface(){
+        return _surface;
+    }
+
+    void display(){
+
+         // Blit gpu texture to screen
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, _fbo);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        //glBlitFramebuffer(0, 0, _surface.width, _surface.height, left, top, right, bottom, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+    }
+
+    void loadImage(const char* file)
+        {   
+            int n, width, height;
             unsigned char* data = stbi_load(file, &width, &height, &n, 0);
             if (data)
             {
+                std::cout<<n<<" "<<width<<" "<<height<<std::endl;
+                _surface.width = width;
+                _surface.height = height;
                 _surface.pixels = (uint*)malloc(width * height * sizeof(uint));
                 const int s = width * height;
                 if (n == 1) // greyscale
@@ -85,8 +101,9 @@ class Image {
                     for (int i = 0; i < s; i++) _surface.pixels[i] = (data[i * n + 0] << 16) + (data[i * n + 1] << 8) + data[i * n + 2];
                 }
             }
+            std::cout<<*_surface.pixels<<std::endl;
             stbi_image_free(data);
         }
 };
 
-RAYTRACER_NAMESPACE_END
+#endif
