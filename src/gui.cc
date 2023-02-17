@@ -105,32 +105,8 @@ int main(){
     GLenum err = glewInit();
 
     Image image;
-    const char * file = "/Users/maturk/Downloads/test.jpg";
-    //image.loadImage(file);
-    //image.getSurface();
-
-    //fbo
-    unsigned int fbo;
-    glGenFramebuffers(1, &fbo);
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);  
-
-    //texture
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load(file, &width, &height, &nrChannels, 0); 
-    unsigned int texture;
-    glGenTextures(1, &texture);  
-    glBindTexture(GL_TEXTURE_2D, texture);  
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-    
-    std::cout<<width<<" "<<height <<" hi" <<std::endl;
-
-    // attach texture to frame buffer
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0); 
-    //check for errors 
-    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);  
-
+    const char * file = "/home/maturk/Downloads/test.jpg";
+    image.loadImage(file);
 
     while (!glfwWindowShouldClose(window)){
         
@@ -141,31 +117,13 @@ int main(){
         ImGui_ImplOpenGL3_NewFrame();
         processInput(window);
 
-        //render
-         //update texture
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB , 1200 , 900 , 0, GL_RGB, GL_FLOAT, data);
-        //glBlitFramebuffer(0, 0, 1200, 900,
-        //          0, 0, 1200, 900,
-        //          GL_COLOR_BUFFER_BIT, GL_LINEAR);
-        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        // update fbo with texture
+        image.update();
+        
+        // display
+        image.display();
 
-        // update
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo); //draw
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1200, 900, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);//draw
-        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);// draw frame buffer bound to default fb 
-
-        //display
-        //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo); //read
-        glReadBuffer(GL_COLOR_ATTACHMENT0);
-        glBlitFramebuffer(0, 0, 1200, 900, 0, 0, 1200, 900, GL_COLOR_BUFFER_BIT, GL_LINEAR); // copies from read to draw fb (default)
-        //glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-
-        // render your GUI
+        // render ImGUI
         ImGui::NewFrame();  
         ImGui::Begin("Menu");
         ImGui::Text("Loading frame buffer as image");
@@ -179,7 +137,7 @@ int main(){
         glfwPollEvents();
 
     }
-    glDeleteFramebuffers(1, &fbo);  
+    image.destroy();
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
