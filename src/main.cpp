@@ -74,22 +74,21 @@ int main(){
     bool once = true;
     while (gui.open()){
         gui.start(image);
-        image.display();
         if (image.m_surface.render == true){ 
             camera.update(image.m_surface);
             //std::cerr<<"Width "<<image.m_surface.width<<" "<<"Height "<<image.m_surface.height<<std::endl;
             for (int j = 0; j <= image.m_surface.height-1; j++) {
                 //std::cerr << "\rScanlines remaining: " << image.m_surface.height-j-1 << " " << std::flush;
                 for (int i = 0; i <= image.m_surface.width-1; i++) {
-                    Color pixel_color(0, 0, 0);
-                    auto u = (i + raytracer::random()) / (image.m_surface.width-1);
-                    auto v = (j + raytracer::random()) / (image.m_surface.height-1);
+                    Color pixel_color(0.5, 0.0, 1.0);
+                    //auto u = (i + raytracer::random()) / (image.m_surface.width-1);
+                    //auto v = (j + raytracer::random()) / (image.m_surface.height-1);
                     //Ray r = camera.get_ray(u, v);
                     //pixel_color += ray_color(r, world, max_depth);
                     //pixel_color = pixel_color;
-                    image.m_surface.pixels[(j*image.m_surface.width +i)*3 + 0] = 100;//((255*pixel_color.x()));
-                    image.m_surface.pixels[(j*image.m_surface.width +i)*3 + 1] = 100;//((255*pixel_color.y()));
-                    image.m_surface.pixels[(j*image.m_surface.width +i)*3 + 2] = (uint8_t)0.0;//((255*pixel_color.z()));
+                    image.m_surface.pixels[(j*(image.m_surface.width) +i)] = pixel_color;//((255*pixel_color.x()));
+                    //image.m_surface.pixels[(j*image.m_surface.width +i)*3] = 100;//((255*pixel_color.y()));
+                    //image.m_surface.pixels[(j*image.m_surface.width +i)*3] = 0;//((255*pixel_color.z()));
                 }
             }
             image.m_surface.render = false;

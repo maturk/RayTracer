@@ -6,13 +6,13 @@
 #include <iostream>
 #include "stb_image.h"
 
-
+RAYTRACER_NAMESPACE_BEGIN
 class Image {
 
     public:
         // struct to hold image data
         struct Data {
-            unsigned char* pixels; // (uint*)MALLOC64(w * h * sizeof(uint));
+            Color* pixels; // (uint*)MALLOC64(w * h * sizeof(uint));
             int width;
             int height;
             bool render;
@@ -26,7 +26,7 @@ class Image {
     Image(int width, int height): m_surface{nullptr, width, height} {
         glGenFramebuffers(1 , &m_fbo); // generate fbo
         glGenTextures(1 , &m_texture); // generate texture
-        m_surface.pixels = (unsigned char*)malloc(3 * width * height);
+        m_surface.pixels = (Color*)malloc(3 * width * height);
         m_surface.render = true;
     }
 
@@ -34,9 +34,9 @@ class Image {
         m_surface.height = height;
         m_surface.width = width;
         delete(m_surface.pixels);
-        m_surface.pixels = (unsigned char*)malloc(3 * width * height );
-        std::cerr<<"AR: "<<(float)(m_surface.width)/(float)(m_surface.height)<<std::endl;
-        std::cerr<<"Window : "<<m_surface.width<<" "<<m_surface.height<<std::endl;
+        m_surface.pixels = (Color*)malloc(3 * width * height );
+        std::cerr<<"Aspect Ratio: "<<(float)(m_surface.width)/(float)(m_surface.height)<<std::endl;
+        std::cerr<<"Window width : "<<m_surface.width<<" height "<<m_surface.height<<std::endl;
         //glDeleteTextures(1, &m_texture);
         //glBindTexture(GL_TEXTURE_2D, m_texture); 
         m_surface.render = true;
@@ -47,7 +47,7 @@ class Image {
         //std::cerr<<"Inside update Width "<<m_surface.width<<" "<<"Height "<<m_surface.height<<"\n"<<std::flush;
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo); // Bind draw frame buffer and texture
         glBindTexture(GL_TEXTURE_2D, m_texture); 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB , m_surface.width , m_surface.height , 0, GL_RGB, GL_BYTE, m_surface.pixels); // Allocate rendered image to 2D texture
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F , m_surface.width , m_surface.height , 0, GL_RGB, GL_FLOAT, m_surface.pixels); // Allocate rendered image to 2D texture
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0); // Attach texture to draw frame buffer
@@ -100,5 +100,5 @@ class Image {
         GLuint m_fbo; // Frame buffer object
         GLuint m_texture; // Texture that attaches to frame buffer
 };
-
+RAYTRACER_NAMESPACE_END
 #endif
