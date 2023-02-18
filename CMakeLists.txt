@@ -40,7 +40,7 @@ target_include_directories("ImGui" PUBLIC ${IMGUI_PATH} ${IMGUI_PATH}/backends  
 )
 
 # Link Targets
-target_link_libraries(${PROJECT_NAME} PUBLIC ImGui glfw glad ${OPENGL_LIBRARIES} ${GLUT_LIBRARY}
+target_link_libraries(${PROJECT_NAME} PUBLIC ImGui glfw glad ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} libglew_static
 )
 
 target_link_libraries("gui" PUBLIC glfw ImGui glad ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} libglew_static

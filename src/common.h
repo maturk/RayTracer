@@ -53,12 +53,12 @@ inline double clamp(double x, double min, double max) {
 }
 
 // Specular reflection equation
-Vector3f reflect(const Vector3f& v, const Vector3f& n) {
+inline Vector3f reflect(const Vector3f& v, const Vector3f& n) {
     return v - 2*v.dot(n)*n;
 }
 
 // Refraction (Snell's law)
-Vector3f refract(const Vector3f& uv, const Vector3f& n, double etai_over_etat) {
+inline Vector3f refract(const Vector3f& uv, const Vector3f& n, double etai_over_etat) {
     auto cos_theta = fmin((-uv).dot(n), 1.0);
     Vector3f r_out_perp =  etai_over_etat * (uv + cos_theta*n);
     Vector3f r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.squaredNorm())) * n;

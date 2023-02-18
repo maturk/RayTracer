@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "ray.h"
+#include "image.cpp"
 
 RAYTRACER_NAMESPACE_BEGIN
 
@@ -24,6 +25,17 @@ class Camera {
             return Ray(origin, lower_left_corner + u*horizontal + v*vertical - origin);
         }
 
+        void update(Image::Data& surface){
+            auto aspect_ratio = (surface.width/surface.height);
+            auto viewport_height = 2.0;
+            auto viewport_width = aspect_ratio * viewport_height;
+            auto focal_length = 1.0;
+
+            origin = Point3f(0, 0, 0);
+            horizontal = Vector3f(viewport_width, 0.0, 0.0);
+            vertical = Vector3f(0.0, viewport_height, 0.0);
+            lower_left_corner = origin - horizontal/2 - vertical/2 - Vector3f(0, 0, focal_length);
+        }
     private:
         Point3f origin;
         Point3f lower_left_corner;

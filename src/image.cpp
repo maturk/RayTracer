@@ -1,8 +1,8 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include "gui.hpp"
-#include "common.hpp"
+#include "gui.h"
+#include "common.h"
 #include <iostream>
 #include "stb_image.h"
 
@@ -15,35 +15,41 @@ class Image {
             unsigned char* pixels; // (uint*)MALLOC64(w * h * sizeof(uint));
             int width;
             int height;
+            bool render;
         };
 
     Image(): m_surface{nullptr, 0, 0} {
         glGenFramebuffers(1 , &m_fbo); // generate fbo
         glGenTextures(1 , &m_texture); // generate texture
-        }
+    }
     
-    Image(int w, int h): m_surface{nullptr, w, h} {
+    Image(int width, int height): m_surface{nullptr, width, height} {
         glGenFramebuffers(1 , &m_fbo); // generate fbo
         glGenTextures(1 , &m_texture); // generate texture
-        std::cout<<"hello im here "<<std::endl;
-        std::cout<<m_surface.width<<" "<<m_surface.height<<std::endl;
-        //m_surface.pixels = (unsigned char *)malloc(3 * w * h);
-        }
+        m_surface.pixels = (unsigned char*)malloc(3 * width * height);
+        m_surface.render = true;
+    }
+
+    void updateSettings(int& width, int& height){
+        m_surface.height = height;
+        m_surface.width = width;
+        delete(m_surface.pixels);
+        m_surface.pixels = (unsigned char*)malloc(3 * width * height );
+        std::cerr<<"AR: "<<(float)(m_surface.width)/(float)(m_surface.height)<<std::endl;
+        std::cerr<<"Window : "<<m_surface.width<<" "<<m_surface.height<<std::endl;
+        //glDeleteTextures(1, &m_texture);
+        //glBindTexture(GL_TEXTURE_2D, m_texture); 
+        m_surface.render = true;
+        update();
+    }
         
-    void update(int w, int h){
+    void update(){
+        //std::cerr<<"Inside update Width "<<m_surface.width<<" "<<"Height "<<m_surface.height<<"\n"<<std::flush;
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo); // Bind draw frame buffer and texture
         glBindTexture(GL_TEXTURE_2D, m_texture); 
-        m_surface.height=h;
-        m_surface.width=w;
-        for (int y = 0; y <900; y++){
-            for (int x = 0; x < 1200; x++){
-                //std::cout<<m_surface.pixels[(y*m_surface.width +x) * n +0]<<std::endl;
-                m_surface.pixels[(y*m_surface.width +x) * 3 +0] = 120;
-                m_surface.pixels[(y*m_surface.width +x) * 3 +1] = 120;
-                m_surface.pixels[(y*m_surface.width +x) * 3 +2] = 10;
-            }
-        }
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB , m_surface.width , m_surface.height , 0, GL_RGB, GL_UNSIGNED_BYTE, m_surface.pixels); // Allocate rendered image to 2D texture
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB , m_surface.width , m_surface.height , 0, GL_RGB, GL_BYTE, m_surface.pixels); // Allocate rendered image to 2D texture
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0); // Attach texture to draw frame buffer
         
         // Check everythig ok and bind draw frame buffer
@@ -54,6 +60,7 @@ class Image {
     }
 
     void display(){
+        //std::cerr<<"Inside display Width "<<m_surface.width<<" "<<"Height "<<m_surface.height<<"\n"<<std::flush;
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
         glReadBuffer(GL_COLOR_ATTACHMENT0);
@@ -76,17 +83,16 @@ class Image {
             int width, height, n;
             //m_surface.pixels = stbi_load(file, &width, &height, &n, 0);
             //std::cout <<sizeof(m_surface.pixels)<<std::endl;
-            m_surface.pixels = (unsigned char*)malloc(3 * 1200 * 900);
+            //m_surface.pixels = (unsigned int*)malloc(3* 1200 * 900 );
             m_surface.width = width;
             m_surface.height = height;
-            for (int y = 0; y <900; y++){
-                for (int x = 0; x < 1200; x++){
-                    //std::cout<<m_surface.pixels[(y*m_surface.width +x) * n +0]<<std::endl;
-                    m_surface.pixels[(y*m_surface.width +x) * n +0] = 120;
-                    m_surface.pixels[(y*m_surface.width +x) * n +1] = 120;
-                    m_surface.pixels[(y*m_surface.width +x) * n +2] = 10;
-                }
-            }
+            //for (int y = 0; y <900; y++){
+            //    for (int x = 0; x < 1200; x++){
+            //        m_surface.pixels[(y*m_surface.width +x) * n +0] = 0 ;
+            //        m_surface.pixels[(y*m_surface.width +x) * n +1] = 0 ;
+            //        m_surface.pixels[(y*m_surface.width +x) * n +2] = 0 ;
+            //    }
+            //}
         }
 
     public:
