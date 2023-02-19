@@ -99,6 +99,7 @@ class GUI {
             glfwGetWindowSize(m_window, &width, &height);
             glfwGetFramebufferSize(m_window, &width2, &height2);
             if (width2!=width){
+                std::cout<<"wtf"<<std::endl;
                 //std::cerr<<"Window : "<<width<<" "<<height<<std::endl;
                 //std::cerr<<"Framebuffer: "<<width2<<" "<<height2<<std::endl;
             }
@@ -112,10 +113,8 @@ class GUI {
         }
 
         void end(Image::Data& surface){
-            
             glfwSwapBuffers(m_window);
             glfwPollEvents();
-            
         }
 
         void destroy(){

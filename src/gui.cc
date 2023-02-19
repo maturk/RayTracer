@@ -13,7 +13,7 @@
 RAYTRACER_NAMESPACE_BEGIN
 class GUI {
     public:
-        GUI(): m_width(1200), m_height(900) {
+        GUI(): m_width(400), m_height(225) {
             // Define glsl_version
             #if defined(IMGUI_IMPL_OPENGL_ES2)
                     const char* glsl_version = "#version 100";
@@ -75,13 +75,22 @@ class GUI {
             return !glfwWindowShouldClose(m_window);
         }
 
-        void start(){
+        void start(Image& image){
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
             ImGui_ImplGlfw_NewFrame();
             ImGui_ImplOpenGL3_NewFrame();
             processInput(m_window);
+
+            int width, height;
+            glfwGetWindowSize(m_window, &width, &height);
+            if (width != image.m_surface.width | height != image.m_surface.height){
+                std::cerr<<"\n";
+                //std::cerr<<"Window changed new: "<<width<<" "<<height<<std::endl;
+                //std::cerr<<"Window changed old: "<<image.m_surface.width<<" "<<image.m_surface.height<<std::endl;
+                image.updateSettings(width, height);
+            }
 
         }
 
@@ -148,17 +157,18 @@ RAYTRACER_NAMESPACE_END
 int main(){
     using namespace raytracer;
 
+    
+    int w = 400;
+    int h = 225;
     GUI gui;
-    int w = 1200;
-    int h = 900;
     Image image(w,h);
-    const char * file = "/Users/maturk/Downloads/test.jpg";
-    image.loadImage(file);
+    //const char * file = "/Users/maturk/Downloads/test.jpg";
+    //image.loadImage(file);
 
     while (gui.open()){
-        gui.start();
-        image.update(w,h);
-        std::cout<<image.m_surface.pixels[1]<<std::endl;
+        gui.start(image);
+        image.update();
+        //std::cout<<image.m_surface.pixels[1]<<std::endl;
         image.display();
         gui.end();
     }

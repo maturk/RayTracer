@@ -25,18 +25,27 @@ class Image {
     Image(int w, int h): m_surface{nullptr, w, h} {
         glGenFramebuffers(1 , &m_fbo); // generate fbo
         glGenTextures(1 , &m_texture); // generate texture
-        std::cout<<"hello im here "<<std::endl;
-        std::cout<<m_surface.width<<" "<<m_surface.height<<std::endl;
-        //m_surface.pixels = (unsigned char *)malloc(3 * w * h);
+        //std::cout<<m_surface.width<<" "<<m_surface.height<<std::endl;
+        m_surface.pixels = (unsigned char *)malloc(3 * w * h);
         }
-        
-    void update(int w, int h){
+
+    void updateSettings(int& width, int& height){
+        m_surface.height = height;
+        m_surface.width = width;
+        free(m_surface.pixels);
+        m_surface.pixels = new unsigned char[width * height * 3];
+        std::cerr<<"Aspect Ratio: "<<(float)(m_surface.width)/(float)(m_surface.height)<<std::endl;
+        std::cerr<<"Window width : "<<m_surface.width<<" height "<<m_surface.height<<std::endl;
+        //glDeleteTextures(1, &m_texture);
+        //glBindTexture(GL_TEXTURE_2D, m_texture); 
+        //m_surface.render = true;
+        //update();
+    }
+    void update(){
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo); // Bind draw frame buffer and texture
         glBindTexture(GL_TEXTURE_2D, m_texture); 
-        m_surface.height=h;
-        m_surface.width=w;
-        for (int y = 0; y <900; y++){
-            for (int x = 0; x < 1200; x++){
+        for (int y = 0; y <m_surface.height; y++){
+            for (int x = 0; x < m_surface.width; x++){
                 //std::cout<<m_surface.pixels[(y*m_surface.width +x) * n +0]<<std::endl;
                 m_surface.pixels[(y*m_surface.width +x) * 3 +0] = 120;
                 m_surface.pixels[(y*m_surface.width +x) * 3 +1] = 120;
