@@ -26,32 +26,33 @@ class Image {
     Image(int width, int height): m_surface{nullptr, width, height} {
         glGenFramebuffers(1 , &m_fbo); // generate fbo
         glGenTextures(1 , &m_texture); // generate texture
-        m_surface.pixels = new unsigned char[width * height * 3];
+        m_surface.pixels = (unsigned char *)malloc(4 * width * height);
         m_surface.render = true;
     }
 
     void updateSettings(int& width, int& height){
         m_surface.height = height;
         m_surface.width = width;
-        delete(m_surface.pixels);
-        m_surface.pixels = new unsigned char[width * height * 3];
-        std::cerr<<"Aspect Ratio: "<<(float)(m_surface.width)/(float)(m_surface.height)<<std::endl;
-        std::cerr<<"Window width : "<<m_surface.width<<" height "<<m_surface.height<<std::endl;
-        //glDeleteTextures(1, &m_texture);
-        //glBindTexture(GL_TEXTURE_2D, m_texture); 
+        free(m_surface.pixels);
+        m_surface.pixels = (unsigned char *)malloc(4 * width * height);
+        for (int y = 0; y <height; y++){
+            for (int x = 0; x < width; x++){
+                m_surface.pixels[(y*width +x) * 4 +0] = 0.0 ;
+                m_surface.pixels[(y*width +x) * 4 +1] = 0.0 ;
+                m_surface.pixels[(y*width +x) * 4 +2] = 0.0 ;
+                m_surface.pixels[(y*width +x) * 4 +3] = 0.0 ;
+            }
+        }
         m_surface.render = true;
         update();
     }
         
     void update(){
-        //std::cerr<<"Inside update Width "<<m_surface.width<<" "<<"Height "<<m_surface.height<<"\n"<<std::flush;
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo); // Bind draw frame buffer and texture
         glBindTexture(GL_TEXTURE_2D, m_texture); 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8 , m_surface.width , m_surface.height , 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)m_surface.pixels); // Allocate rendered image to 2D texture
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA , m_surface.width , m_surface.height , 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)m_surface.pixels); // Allocate rendered image to 2D texture
         glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0); // Attach texture to draw frame buffer
         
         // Check everythig ok and bind draw frame buffer
@@ -61,31 +62,11 @@ class Image {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // bind to default frame buffer to show on window
     }
 
-    void display(){
-        //std::cerr<<"Inside display Width "<<m_surface.width<<" "<<"Height "<<m_surface.height<<"\n"<<std::flush;
-        uint32_t w = m_surface.width;
-        uint32_t h =  m_surface.height;
-        const float outputAspect = float(w) / h;
-        const float textureAspect = float(m_surface.width) / m_surface.height;
-        uint32_t left, top, right, bottom;
-        if (outputAspect < textureAspect) {
-            left = 0;
-            right = w;
-            const float scaledY = float(m_surface.height) * w / m_surface.width;
-            top = (h - scaledY) / 2.f;
-            bottom = top + scaledY;
-        } else {
-            top = 0;
-            bottom = h;
-            const float scaledX = float(m_surface.width) * h / m_surface.height;
-            left = (w - scaledX) / 2.f;
-            right = left + scaledX;
-        }
+    void display(){        
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
         glReadBuffer(GL_COLOR_ATTACHMENT0);
-        glBlitFramebuffer(0, 0, m_surface.width, m_surface.height, left, top, right, bottom, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-        //glBlitFramebuffer(0, 0, m_surface.width, m_surface.height, 0, 0, m_surface.width, m_surface.height, GL_COLOR_BUFFER_BIT, GL_LINEAR); // copies from read to draw fb (default)
+        glBlitFramebuffer(0, 0, m_surface.width, m_surface.height, 0, 0, m_surface.width, m_surface.height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
     }
 

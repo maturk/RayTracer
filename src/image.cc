@@ -26,20 +26,14 @@ class Image {
         glGenFramebuffers(1 , &m_fbo); // generate fbo
         glGenTextures(1 , &m_texture); // generate texture
         //std::cout<<m_surface.width<<" "<<m_surface.height<<std::endl;
-        m_surface.pixels = (unsigned char *)malloc(3 * w * h);
+        m_surface.pixels = (unsigned char *)malloc(4 * w * h);
         }
 
     void updateSettings(int& width, int& height){
         m_surface.height = height;
         m_surface.width = width;
         free(m_surface.pixels);
-        m_surface.pixels = new unsigned char[width * height * 3];
-        std::cerr<<"Aspect Ratio: "<<(float)(m_surface.width)/(float)(m_surface.height)<<std::endl;
-        std::cerr<<"Window width : "<<m_surface.width<<" height "<<m_surface.height<<std::endl;
-        //glDeleteTextures(1, &m_texture);
-        //glBindTexture(GL_TEXTURE_2D, m_texture); 
-        //m_surface.render = true;
-        //update();
+        m_surface.pixels = new unsigned char[width * height * 4];
     }
     void update(){
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo); // Bind draw frame buffer and texture
@@ -47,12 +41,13 @@ class Image {
         for (int y = 0; y <m_surface.height; y++){
             for (int x = 0; x < m_surface.width; x++){
                 //std::cout<<m_surface.pixels[(y*m_surface.width +x) * n +0]<<std::endl;
-                m_surface.pixels[(y*m_surface.width +x) * 3 +0] = 120;
-                m_surface.pixels[(y*m_surface.width +x) * 3 +1] = 120;
-                m_surface.pixels[(y*m_surface.width +x) * 3 +2] = 10;
+                m_surface.pixels[(y*m_surface.width +x) * 4 +0] = 120;
+                m_surface.pixels[(y*m_surface.width +x) * 4 +1] = 120;
+                m_surface.pixels[(y*m_surface.width +x) * 4 +2] = 10;
+                m_surface.pixels[(y*m_surface.width +x) * 4 +3] = 0;
             }
         }
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB , m_surface.width , m_surface.height , 0, GL_RGB, GL_UNSIGNED_BYTE, m_surface.pixels); // Allocate rendered image to 2D texture
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA , m_surface.width , m_surface.height , 0, GL_RGBA, GL_UNSIGNED_BYTE, m_surface.pixels); // Allocate rendered image to 2D texture
         glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0); // Attach texture to draw frame buffer
         
         // Check everythig ok and bind draw frame buffer
