@@ -13,7 +13,7 @@ RAYTRACER_NAMESPACE_BEGIN
 
 class GUI {
     public:
-        GUI(): m_width(400), m_height(225) {
+        GUI(int width, int height): m_width(width), m_height(height) {
             // Define glsl_version
             #if defined(IMGUI_IMPL_OPENGL_ES2)
                     const char* glsl_version = "#version 100";
@@ -69,7 +69,6 @@ class GUI {
                 exit(EXIT_FAILURE);
             }
             GLenum err = glewInit();
-
         }
 
         bool open(){
@@ -84,35 +83,29 @@ class GUI {
             ImGui_ImplOpenGL3_NewFrame();
             processInput(m_window);
 
-            // render ImGUI
-            ImGui::NewFrame();  
-            ImGui::Begin("Menu");
-            ImGui::Text("Loading frame buffer as image");
-            ImGui::End();
             
-            // Render dear imgui onto screen
-            ImGui::Render();
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+            // Update viewport width height if user changes display size
             int width, height;
-            int width2, height2;
             glfwGetWindowSize(m_window, &width, &height);
-            glfwGetFramebufferSize(m_window, &width2, &height2);
-            if (width2!=width){
-                std::cout<<"wtf"<<std::endl;
-                //std::cerr<<"Window : "<<width<<" "<<height<<std::endl;
-                //std::cerr<<"Framebuffer: "<<width2<<" "<<height2<<std::endl;
-            }
             if (width != image.m_surface.width | height != image.m_surface.height){
-                std::cerr<<"\n";
-                //std::cerr<<"Window changed new: "<<width<<" "<<height<<std::endl;
-                //std::cerr<<"Window changed old: "<<image.m_surface.width<<" "<<image.m_surface.height<<std::endl;
-                
                 image.updateSettings(width, height);
             }
         }
 
         void end(Image::Data& surface){
+            // render ImGUI
+            ImGui::NewFrame();  
+            if (ImGui::Begin("Controls"));
+            if (ImGui::Button("Save"))
+                {
+                    
+                }
+            ImGui::End();
+
+            // Render dear imgui onto screen
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
             glfwSwapBuffers(m_window);
             glfwPollEvents();
         }
@@ -123,7 +116,6 @@ class GUI {
             ImGui::DestroyContext();
             glfwTerminate();
         }
-
 
         // glfw: whenever the window size changed (by OS or user resize) this callback function executes
         static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
