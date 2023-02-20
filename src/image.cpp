@@ -83,18 +83,9 @@ class Image {
     void loadImage(const char* file){   
             stbi_set_flip_vertically_on_load(true); // flip image for OpenGL coordinate system
             int width, height, n;
-            //m_surface.pixels = stbi_load(file, &width, &height, &n, 0);
-            //std::cout <<sizeof(m_surface.pixels)<<std::endl;
-            //m_surface.pixels = (unsigned int*)malloc(3* 1200 * 900 );
+            m_surface.pixels = stbi_load(file, &width, &height, &n, 0);
             m_surface.width = width;
             m_surface.height = height;
-            //for (int y = 0; y <900; y++){
-            //    for (int x = 0; x < 1200; x++){
-            //        m_surface.pixels[(y*m_surface.width +x) * n +0] = 0 ;
-            //        m_surface.pixels[(y*m_surface.width +x) * n +1] = 0 ;
-            //        m_surface.pixels[(y*m_surface.width +x) * n +2] = 0 ;
-            //    }
-            //}
         }
 
     public:
