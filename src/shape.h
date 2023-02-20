@@ -21,7 +21,7 @@ struct hit_record{
 
     bool front_face;
 
-    inline void set_face_normal(const Ray& r, const Vector3f& outward_normal) {
+    inline void set_face_normal(const Ray& r, const Vector3f& outward_normal, bool& front_face) {
         front_face = r.w().dot(outward_normal) < 0;
         n = front_face ? outward_normal :-outward_normal;
     }

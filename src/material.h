@@ -76,6 +76,8 @@ class dielectric : public Material {
             double refraction_ratio = rec.front_face ? (1.0/ir) : ir;
 
             Vector3f unit_direction = (r_in.w()).normalized();
+            Vector3f refracted = refract(unit_direction, rec.n, refraction_ratio);
+
             double cos_theta = fmin((-unit_direction).dot(rec.n), 1.0);
             double sin_theta = sqrt(1.0 - cos_theta*cos_theta);
 
