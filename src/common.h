@@ -6,7 +6,7 @@
 #define RAYTRACER_NAMESPACE_END }
 
 // Common includes
-#include <Eigen/Core>
+#include <Eigen/Dense>
 #include <memory>
 #include <random>
 
