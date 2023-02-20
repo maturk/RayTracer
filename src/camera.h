@@ -9,38 +9,56 @@ RAYTRACER_NAMESPACE_BEGIN
 
 class Camera {
     public:
-        Camera() {
-            auto aspect_ratio = 16.0 / 9.0;
-            auto viewport_height = 2.0;
-            auto viewport_width = aspect_ratio * viewport_height;
-            auto focal_length = 1.0;
+        Camera( Point3f lookfrom, Point3f lookat, Vector3f vup, double vfov, double aspect_ratio): 
+            m_lookfrom(lookfrom), m_lookat(lookat),m_vup(vup), m_vfov(vfov), m_aspect_ratio(aspect_ratio) {
 
-            origin = Point3f(0, 0, 0);
-            horizontal = Vector3f(viewport_width, 0.0, 0.0);
-            vertical = Vector3f(0.0, viewport_height, 0.0);
-            lower_left_corner = origin - horizontal/2 - vertical/2 - Vector3f(0, 0, focal_length);
+            auto theta = degrees_to_radians(m_vfov);
+            auto h = tan(theta/2);
+            auto viewport_height = 2.0 * h;
+            auto viewport_width = aspect_ratio * viewport_height;
+
+            Vector3f w = (lookfrom - lookat).normalized();
+            Vector3f u = (vup.cross(w)).normalized();
+            Vector3f v = w.cross(u);
+
+            m_origin = lookfrom;
+            m_horizontal = viewport_width * u;
+            m_vertical = viewport_height * v;
+            m_lower_left_corner = m_origin - m_horizontal/2 - m_vertical/2 - w;
+
         }
 
-        Ray get_ray(double u, double v) const {
-            return Ray(origin, lower_left_corner + u*horizontal + v*vertical - origin);
+        Ray get_ray(double s, double t) const {
+            return Ray(m_origin, m_lower_left_corner + s*m_horizontal + t*m_vertical - m_origin);
         }
 
         void update(Image::Data& surface){
-            auto aspect_ratio = (surface.width/surface.height);
-            auto viewport_height = 2.0;
-            auto viewport_width = aspect_ratio * viewport_height;
-            auto focal_length = 1.0;
+            m_aspect_ratio = (surface.width/surface.height);
 
-            origin = Point3f(0, 0, 0);
-            horizontal = Vector3f(viewport_width, 0.0, 0.0);
-            vertical = Vector3f(0.0, viewport_height, 0.0);
-            lower_left_corner = origin - horizontal/2 - vertical/2 - Vector3f(0, 0, focal_length);
+            auto theta = degrees_to_radians(m_vfov);
+            auto h = tan(theta/2);
+            auto viewport_height = 2.0 * h;
+            auto viewport_width = m_aspect_ratio * viewport_height;
+
+            Vector3f w = (m_lookfrom - m_lookat).normalized();
+            Vector3f u = (m_vup.cross(w)).normalized();
+            Vector3f v = w.cross(u);
+
+            m_origin = m_lookfrom;
+            m_horizontal = viewport_width * u;
+            m_vertical = viewport_height * v;
+            m_lower_left_corner = m_origin - m_horizontal/2 - m_vertical/2 - w;
         }
     private:
-        Point3f origin;
-        Point3f lower_left_corner;
-        Vector3f horizontal;
-        Vector3f vertical;
+        Point3f m_lookfrom;
+        Point3f m_lookat;
+        Vector3f m_vup;
+        double m_aspect_ratio;
+        double m_vfov;
+        Point3f m_origin;
+        Point3f m_lower_left_corner;
+        Vector3f m_horizontal;
+        Vector3f m_vertical;
 };
 
 RAYTRACER_NAMESPACE_END
