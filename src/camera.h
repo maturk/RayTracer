@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "ray.h"
-#include "image.cpp"
+#include "image.h"
 
 RAYTRACER_NAMESPACE_BEGIN
 
