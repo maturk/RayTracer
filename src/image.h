@@ -1,32 +1,20 @@
-#include "image.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#ifndef IMAGE_H
+#define IMAGE_H
+
+#include "common.h"
+#include "gui.h"
+#include <iostream>
 
 RAYTRACER_NAMESPACE_BEGIN
 class Image {
 
     public:
         // struct to hold image data
-        struct Data {
-            unsigned char* pixels; // (uint*)MALLOC64(w * h * sizeof(uint));
-            int width;
-            int height;
-            bool render;
-        };
+        struct Data {}
 
-    Image(): m_surface{nullptr, 0, 0} {
-        glGenFramebuffers(1 , &m_fbo); // generate fbo
-        glGenTextures(1 , &m_texture); // generate texture
-    }
+    Image() {}
     
-    Image(int width, int height): m_surface{nullptr, width, height} {
-        glGenFramebuffers(1 , &m_fbo); // generate fbo
-        glGenTextures(1 , &m_texture); // generate texture
-        m_surface.pixels = (unsigned char *)malloc(4 * width * height);
-        m_surface.render = true;
-        const char * file = "../assets/start_render.png";
-        loadImage(file);
-    }
+    Image(int width, int height) {}
 
     void updateSettings(int& width, int& height){
         m_surface.height = height;
@@ -92,4 +80,7 @@ class Image {
         GLuint m_fbo; // Frame buffer object
         GLuint m_texture; // Texture that attaches to frame buffer
 };
+
 RAYTRACER_NAMESPACE_END
+
+#endif IMAGE_H

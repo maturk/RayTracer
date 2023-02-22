@@ -78,22 +78,11 @@ class GUI {
         void start(Image& image){
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            
+
+            // render ImGUI
             ImGui_ImplGlfw_NewFrame();
             ImGui_ImplOpenGL3_NewFrame();
-            processInput(m_window);
 
-            
-            // Update viewport width height if user changes display size
-            int width, height;
-            glfwGetWindowSize(m_window, &width, &height);
-            if (width != image.m_surface.width | height != image.m_surface.height){
-                image.updateSettings(width, height);
-            }
-        }
-
-        void end(Image::Data& surface){
-            // render ImGUI
             ImGui::NewFrame();  
             if (ImGui::Begin("Controls"));
             if (ImGui::Button("Save"))
@@ -102,7 +91,32 @@ class GUI {
                 }
             ImGui::End();
 
-            // Render dear imgui onto screen
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            
+            processInput(m_window);
+
+            // Update viewport width height if user changes display size
+            int width, height;
+            glfwGetWindowSize(m_window, &width, &height);
+            if (width != image.m_surface.width | height != image.m_surface.height){
+                image.updateSettings(width, height);
+            }
+        }
+
+        void end(){
+            // render ImGUI
+            ImGui_ImplGlfw_NewFrame();
+            ImGui_ImplOpenGL3_NewFrame();
+
+            ImGui::NewFrame();  
+            if (ImGui::Begin("Controls"));
+            if (ImGui::Button("Save"))
+                {
+                    
+                }
+            ImGui::End();
+
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

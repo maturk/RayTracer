@@ -86,9 +86,6 @@ class GUI {
             int width, height;
             glfwGetWindowSize(m_window, &width, &height);
             if (width != image.m_surface.width | height != image.m_surface.height){
-                std::cerr<<"\n";
-                //std::cerr<<"Window changed new: "<<width<<" "<<height<<std::endl;
-                //std::cerr<<"Window changed old: "<<image.m_surface.width<<" "<<image.m_surface.height<<std::endl;
                 image.updateSettings(width, height);
             }
 

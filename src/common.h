@@ -6,7 +6,8 @@
 #define RAYTRACER_NAMESPACE_END }
 
 // Common includes
-#include <Eigen/Dense>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 #include <memory>
 #include <random>
 
@@ -64,6 +65,7 @@ inline Vector3f refract(const Vector3f& uv, const Vector3f& n, double etai_over_
     Vector3f r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.squaredNorm())) * n;
     return r_out_perp + r_out_parallel;
 }
+
 
 RAYTRACER_NAMESPACE_END
 

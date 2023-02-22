@@ -36,8 +36,7 @@ class Sphere : public Shape { // inherit all Shape member methods (public stay p
             rec.p = ray.at(rec.t);
             rec.n = (rec.p - m_center) / m_radius; // why not normalized
             rec.mat_ptr = mat_ptr;
-            rec.set_face_normal(ray,rec.n, rec.front_face);
-
+            rec.set_face_normal(ray, rec.n, rec.front_face);
             return true;
         }
 
