@@ -22,7 +22,6 @@
 
 // Linux
 #ifdef linux
-#define GLEW_STATIC
 #include <GL/glew.h>
 #endif
 

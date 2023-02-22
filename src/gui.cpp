@@ -1,5 +1,5 @@
 #include "gui.h"
-#include "image.cpp"
+#include "image.h"
 
 #include <GLFW/glfw3.h>
 

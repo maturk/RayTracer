@@ -1,34 +1,20 @@
 #include "image.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 RAYTRACER_NAMESPACE_BEGIN
-class Image {
 
-    public:
-        // struct to hold image data
-        struct Data {
-            unsigned char* pixels; // (uint*)MALLOC64(w * h * sizeof(uint));
-            int width;
-            int height;
-            bool render;
-        };
-
-    Image(): m_surface{nullptr, 0, 0} {
+    Image::Image(): m_surface{nullptr, 0, 0} {
         glGenFramebuffers(1 , &m_fbo); // generate fbo
         glGenTextures(1 , &m_texture); // generate texture
     }
     
-    Image(int width, int height): m_surface{nullptr, width, height} {
+    Image::Image(int width, int height): m_surface{nullptr, width, height} {
         glGenFramebuffers(1 , &m_fbo); // generate fbo
         glGenTextures(1 , &m_texture); // generate texture
         m_surface.pixels = (unsigned char *)malloc(4 * width * height);
         m_surface.render = true;
-        const char * file = "../assets/start_render.png";
-        loadImage(file);
     }
 
-    void updateSettings(int& width, int& height){
+    void Image::updateSettings(int& width, int& height){
         m_surface.height = height;
         m_surface.width = width;
         free(m_surface.pixels);
@@ -45,7 +31,7 @@ class Image {
         update();
     }
         
-    void update(){
+    void Image::update(){
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo); // Bind draw frame buffer and texture
         glBindTexture(GL_TEXTURE_2D, m_texture); 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -60,7 +46,7 @@ class Image {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // bind to default frame buffer to show on window
     }
 
-    void display(){        
+    void Image::display(){        
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
         glReadBuffer(GL_COLOR_ATTACHMENT0);
@@ -68,28 +54,14 @@ class Image {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
     }
 
-    void destroy()
+    void Image::destroy()
     {
         glDeleteFramebuffers(1 , &m_fbo); // Delete fbo
         glDeleteTextures(1 , &m_texture); // Delete texture
     }
 
-    Data getSurface(){
+    Image::Data Image::getSurface(){
         return m_surface;
     }
-
-    void loadImage(const char* file){   
-        
-            //stbi_set_flip_vertically_on_load(true); // flip image for OpenGL coordinate system
-            int width, height, n;
-            m_surface.pixels = stbi_load(file, &width, &height, &n, 0);
-            m_surface.width = width;
-            m_surface.height = height;
-        }
-
-    public:
-        Data m_surface; // struct to hold data
-        GLuint m_fbo; // Frame buffer object
-        GLuint m_texture; // Texture that attaches to frame buffer
-};
+    
 RAYTRACER_NAMESPACE_END
