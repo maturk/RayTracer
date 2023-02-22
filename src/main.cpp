@@ -8,8 +8,8 @@
 #include "warp.h"
 #include "material.h"
 #include "gui.cpp"
-#define STB_IMAGE_IMPLEMENTATION
-#include "image.cpp"
+#include "image.h"
+#include "timer.h"
 
 
 RAYTRACER_NAMESPACE_BEGIN
@@ -72,9 +72,13 @@ int main(){
 
     // Camera
     Camera camera(Point3f(-2,2,1), Point3f(0,0,-1), Vector3f(0,1,0), 20, aspect_ratio);
+
     //GUI and image
     GUI gui(image_width,image_height);
     Image image(image_width,image_height);
+
+    // Timer
+    Timer timer;
 
     while (gui.open()){
         gui.start(image);
@@ -84,8 +88,11 @@ int main(){
         if (image.m_surface.render == true){ 
             gui.start(image);
             for (int s = 1; s <= samples_per_pixel; s++) {
-                std::cerr << "\rSamples per pixel remaining: " << samples_per_pixel-(s-1) << ' ' << std::flush;
+                std::cerr << "\rSamples per pixel remaining: " << samples_per_pixel-(s-1) << "\n " << std::flush;
                 camera.update(image.m_surface); // update camera viewport
+                timer.reset();
+
+                //#pragma omp parallel for ordered schedule(dynamic)
                 for (int y = 0; y < image.m_surface.height; y++){
                     for (int x = 0; x < image.m_surface.width; x++){
                         auto u = (x + raytracer::random()) / (image.m_surface.width-1);
@@ -102,6 +109,8 @@ int main(){
                         image.m_surface.pixels[(y*image.m_surface.width +x) * 4 +3] = (float)0;
                     }
                 }
+                float time = timer.end();
+                std::cerr << "\r \t Time taken to render this sample: " << time << "\n " << std::flush;
                 image.update();
                 image.display();
                 gui.end();

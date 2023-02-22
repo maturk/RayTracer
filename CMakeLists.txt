@@ -15,6 +15,9 @@ project(RayTracer)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 
+# OpenMP parallelisation
+find_package(OpenMP)
+
 # Include exteral libraries
 include_directories(ext/ include/ SYSTEM ${EIGEN3_INCLUDE_DIR})
 
@@ -40,7 +43,7 @@ target_include_directories("ImGui" PUBLIC ${IMGUI_PATH} ${IMGUI_PATH}/backends  
 )
 
 # Link Targets
-target_link_libraries(${PROJECT_NAME} PUBLIC ImGui glfw glad ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} libglew_static
+target_link_libraries(${PROJECT_NAME} PUBLIC ImGui glfw glad ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} libglew_static PRIVATE OpenMP::OpenMP_CXX
 )
 
 target_link_libraries("gui" PUBLIC glfw ImGui glad ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} libglew_static
