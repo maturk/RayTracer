@@ -4,7 +4,7 @@ Another ray tracer based on Shirley's raytracing series.
 ### Structure
 I made a few design choices that differ from Peter Shirley's original implementation.
 - I use Eigen library for primitive type definitions (such as colors, points, and rays). This is useful since Eigen already provides many accelerated operations on vector and matrix types used in ray tracing. 
-- I implemented a GUI using OpenGL and ImGUI for easier rendering.
+- I implemented a GUI using OpenGL and ImGUI for easier rendering. I also implemented basic parallelisation with OpenMP (which caused the installation for MacOS to be a bit more difficult).
 ### Download
 ```
 git clone --recurse-submodules git@github.com:maturk/RayTracer.git
