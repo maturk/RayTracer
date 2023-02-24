@@ -9,6 +9,23 @@ I made a few design choices that differ from Peter Shirley's original implementa
 ```
 git clone --recurse-submodules git@github.com:maturk/RayTracer.git
 cd RayTracer
+```
+### Installation
+#### Linux
+Simply running 
+```
+bash build.sh
+```
+should work :)
+#### MacOS
+Some prerequisites:
+```
+brew install llvm
+brew install libomp
+```
+I set the path to clang++ in CMakeLists.txt to <em>"/opt/homebrew/opt/llvm/bin/clang++"</em>. Make sure this is the same directory indicated when installing llvm with ``brew install llvm``. 
+Then run:
+```
 bash build.sh
 ```
 ### Useful commands
