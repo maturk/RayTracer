@@ -14,13 +14,14 @@ class Image {
             int width;
             int height;
             bool render;
+            bool save;
             };
 
         Image();
         Image(int width, int height) ;
         void updateSettings(int& width, int& height);
         void update();
-        void display();
+        void display(const Settings& settings);
         void destroy();
         Data getSurface();
         void loadImage(const char* file);

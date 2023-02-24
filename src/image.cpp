@@ -46,11 +46,30 @@ RAYTRACER_NAMESPACE_BEGIN
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // bind to default frame buffer to show on window
     }
 
-    void Image::display(){        
+    void Image::display(const Settings& settings){
+        float w = settings.image_width;
+        float h = settings.image_height;
+        const float outputAspect = float(settings.image_width) / settings.image_height;
+        const float textureAspect = float(m_surface.width) / m_surface.height;
+        uint32_t left, top, right, bottom;
+        if (outputAspect < textureAspect) {
+            left = 0;
+            right = w;
+            const float scaledY = float(m_surface.height) * w / m_surface.width;
+            top = (h - scaledY) / 2.f;
+            bottom = top + scaledY;
+        } else {
+            top = 0;
+            bottom = h;
+            const float scaledX = float(m_surface.width) * h / m_surface.height;
+            left = (w - scaledX) / 2.f;
+            right = left + scaledX;
+        }       
+        
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
         glReadBuffer(GL_COLOR_ATTACHMENT0);
-        glBlitFramebuffer(0, 0, m_surface.width, m_surface.height, 0, 0, m_surface.width, m_surface.height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        glBlitFramebuffer(0, 0, m_surface.width, m_surface.height, left, top, right, bottom, GL_COLOR_BUFFER_BIT, GL_LINEAR);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
     }
 
