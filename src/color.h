@@ -3,32 +3,33 @@
 
 #include "common.h"
 #include <iostream>
+#include <fstream>
+#include "image.h"
+#include <filesystem>
 
 RAYTRACER_NAMESPACE_BEGIN
 
-void write_color(std::ostream &out, Color pixel_color, int samples_per_pixel, bool gamma) {
-    auto r = pixel_color.x();
-    auto g = pixel_color.y();
-    auto b = pixel_color.z();
+void save_image(Image image) {
+    std::string cwd = std::filesystem::current_path().string();
+    std::ofstream out(cwd+"/out/image.ppm");
+    std::cout<<cwd+"/out/image.ppm"<<std::endl;
+    out << "P3\n" << image.m_surface.width << " " << image.m_surface.height << "\n255\n";
+    for (int y = 0; y < image.m_surface.height; y++){
+        for (int x = 0; x < image.m_surface.width; x++){
+            auto r = image.m_surface.pixels[(y*image.m_surface.width +x) * 4 +0];
+            auto g = image.m_surface.pixels[(y*image.m_surface.width +x) * 4 +1];
+            auto b = image.m_surface.pixels[(y*image.m_surface.width +x) * 4 +2];
 
-    // Divide the color by the number of samples and gamma-correct for gamma=2.0.
-    auto scale = 1.0 / samples_per_pixel;
-    if (gamma){
-        r = sqrt(scale * r);
-        g = sqrt(scale * g);
-        b = sqrt(scale * b);
+            // Write the translated [0,255] value of each color component.
+            // convert r,g,b to 255 range using static_cast
+            // static_cast<type>
+            out << static_cast<int>(clamp(r, 0.0, 255)) << " "
+                << static_cast<int>(clamp(g, 0.0, 255)) << " "
+                << static_cast<int>(clamp(b, 0.0, 255)) << "\n";
+        }
     }
-    else {
-        r = (scale * r);
-        g = (scale * g);
-        b = (scale * b);
-    }
-    // Write the translated [0,255] value of each color component.
-    // convert r,g,b to 255 range using static_cast
-    // static_cast<type>
-    out << static_cast<int>(256 * clamp(r, 0.0, 0.999)) << ' '
-        << static_cast<int>(256 * clamp(g, 0.0, 0.999)) << ' '
-        << static_cast<int>(256 * clamp(b, 0.0, 0.999)) << '\n';
+    out.close();
+
 }
 
 RAYTRACER_NAMESPACE_END
