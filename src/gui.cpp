@@ -10,6 +10,7 @@
 #include "imgui_impl_opengl3.h"
 
 RAYTRACER_NAMESPACE_BEGIN
+const float float2InputWidth = 121.f;
 
 class GUI {
     public:
@@ -58,12 +59,11 @@ class GUI {
             // Setup ImGUI Platform/Renderer bindings
             ImGui_ImplGlfw_InitForOpenGL(m_window, true);
             ImGui_ImplOpenGL3_Init(glsl_version);
+
             // Setup Dear ImGui style
             ImGui::StyleColorsDark();
             ImGui_ImplOpenGL3_NewFrame();
             
-            glfwSetKeyCallback(m_window, key_callback);
-
             if (!m_window){
                 glfwTerminate();
                 exit(EXIT_FAILURE);
@@ -75,49 +75,55 @@ class GUI {
             return !glfwWindowShouldClose(m_window);
         }
 
-        void start(Image& image){
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        void start(Image& image, Settings& settings){
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            // render ImGUI
-            ImGui_ImplGlfw_NewFrame();
-            ImGui_ImplOpenGL3_NewFrame();
-
-            ImGui::NewFrame();  
-            if (ImGui::Begin("Controls"));
-            if (ImGui::Button("Save"))
-                {
-                    
-                }
-            ImGui::End();
-
-            ImGui::Render();
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             
             processInput(m_window);
+
+            // render ImGUI
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            ImGui::Begin("Renderer");
+            if (ImGui::CollapsingHeader("Settings", ImGuiTreeNodeFlags_DefaultOpen)) {
+                ImGui::SliderFloat("Aspect ratio", &settings.aspect_ratio, 1, 2);
+                ImGui::SliderInt("Height", &image.m_surface.height, 1, 1080);
+                ImGui::SliderInt("Width", &image.m_surface.width, 1, 1920);
+                ImGui::SliderInt("Samples", &settings.samples_per_pixel, 1, 50); 
+                ImGui::SliderInt("Max depth", &settings.max_depth, 1, 20);  
+            }
+            ImGui::Checkbox("Gamma correction", &settings.gamma); 
+            ImGui::Text("Render image with new settings: "); 
+            ImGui::SameLine();
+            if (ImGui::Button("Render")){
+                    image.m_surface.render = true;
+            }
+            ImGui::Text("Save image to ./out/ folder: "); 
+            ImGui::SameLine();
+            if (ImGui::Button("Save")){
+                    image.m_surface.save = true;
+            }
+            if (ImGui::Button("Stop")){
+                    image.m_surface.render = false;
+            }
+            
+            ImGui::End();
+            ImGui::Render();
 
             // Update viewport width height if user changes display size
             int width, height;
             glfwGetWindowSize(m_window, &width, &height);
             if (width != image.m_surface.width | height != image.m_surface.height){
-                image.updateSettings(width, height);
+                //image.updateSettings(width, height);
+                settings.image_height = height;
+                settings.image_width = width;
             }
         }
 
         void end(){
             // render ImGUI
-            ImGui_ImplGlfw_NewFrame();
-            ImGui_ImplOpenGL3_NewFrame();
-
-            ImGui::NewFrame();  
-            if (ImGui::Begin("Controls"));
-            if (ImGui::Button("Save"))
-                {
-                    
-                }
-            ImGui::End();
-
-            ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
             glfwSwapBuffers(m_window);
@@ -153,14 +159,6 @@ class GUI {
         static void error_callback(int error, const char* description)
         {
             fprintf(stderr, "Error: %s\n", description);
-        }
-
-        // Static variables are not destoryed out of scope. When a function inside a class is declared as static, 
-        // it can be accessed outside the class using the class name and scope resolution operator (::), without creating any object.
-        static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-        {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-                glfwSetWindowShouldClose(window, GLFW_TRUE);
         }
 
     public:
