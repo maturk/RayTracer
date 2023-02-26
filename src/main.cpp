@@ -64,7 +64,7 @@ int main(){
                 camera.update(settings); // update camera viewport
                 timer.reset();
                 gui.start(image, settings);
-                #pragma omp parallsl for ordered schedule(dynamic)
+                #pragma omp parallel for ordered schedule(dynamic)
                 for (int y = 0; y < image.m_surface.height; y++){
                     for (int x = 0; x < image.m_surface.width; x++){
                         auto u = (x + raytracer::random()) / (image.m_surface.width-1);
