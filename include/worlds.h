@@ -1,5 +1,5 @@
 #ifndef WORLDS_H
-#define WORDLS_H
+#define WORLDS_H
 
 #include "common.h"
 #include "hittable_list.h"
@@ -28,8 +28,8 @@ inline hittable_list random_scene(int num_objects) {
     }
     if (num_objects > 3) {
         for (int i = 0; i < num_objects - 3; i++ ) {
-            int a = static_cast<int>(random(-11,11));
-            int b = static_cast<int>(random(-11,11));
+            int a = static_cast<int>(11*random(-1,1));
+            int b = static_cast<int>(11*random(-1,1));
 
             auto choose_mat = random();
             Point3f center(a + 0.9*random(), 0.2, b + 0.9*random());
