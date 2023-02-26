@@ -11,8 +11,12 @@ RAYTRACER_NAMESPACE_BEGIN
 
 void save_image(Image image) {
     std::string cwd = std::filesystem::current_path().string();
+    std::filesystem::path out_folder (cwd+"/out/");
+    if (!std::filesystem::exists(out_folder)) { // Check if src folder exists
+        std::filesystem::create_directory(out_folder); // create src folder
+
+    }
     std::ofstream out(cwd+"/out/image.ppm");
-    std::cout<<cwd+"/out/image.ppm"<<std::endl;
     out << "P3\n" << image.m_surface.width << " " << image.m_surface.height << "\n255\n";
     for (int y = 0; y < image.m_surface.height; y++){
         for (int x = 0; x < image.m_surface.width; x++){
@@ -29,6 +33,8 @@ void save_image(Image image) {
         }
     }
     out.close();
+
+    std::cout<<"\nOutput file saved to: "<<cwd+"/out/image.ppm"<<std::endl;
 }
 
 RAYTRACER_NAMESPACE_END
