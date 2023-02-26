@@ -28,8 +28,8 @@ inline hittable_list random_scene(int num_objects) {
     }
     if (num_objects > 3) {
         for (int i = 0; i < num_objects - 3; i++ ) {
-            int a = static_cast<int>(11*random(-1,1));
-            int b = static_cast<int>(11*random(-1,1));
+            int a = static_cast<int>(10*random(-1,1));
+            int b = static_cast<int>(5*random(-1,1));
 
             auto choose_mat = random();
             Point3f center(a + 0.9*random(), 0.2, b + 0.9*random());
