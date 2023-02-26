@@ -29,6 +29,10 @@ Then run:
 bash build.sh
 ```
 ### Useful commands
+Run the main GUI with
+```
+./build/RayTracer
+```
 Build the project with
 ```
 bash build.sh
