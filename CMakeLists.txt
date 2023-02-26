@@ -26,6 +26,11 @@ if(APPLE)
     endif()
 endif()
 find_package(OpenMP REQUIRED)
+if (OPENMP_FOUND)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+endif()
 
 # Eigen 
 # Manually set Eigen paths to local Eigen folder
@@ -46,12 +51,8 @@ add_subdirectory(ext/glad)
 add_subdirectory(ext/glew-cmake)
 
 # Main program
-file(GLOB SOURCES "src/*.cpp" "src/*.h" "include/*")
+file(GLOB SOURCES "src/*.cpp" "src/*.h" "include/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES})
-
-# Scratch progam
-file(GLOB GUI_SOURCES "src/*.cc" "src/*.hpp" "include/*")
-add_executable("gui" ${GUI_SOURCES} )
 
 # ImGui
 set(IMGUI_PATH  "ext/imgui")
@@ -61,13 +62,8 @@ file(GLOB IMGUI_SOURCES ${IMGUI_PATH}/*.cpp ${IMGUI_PATH}/*.h ${IMGUI_PATH}/back
 add_library("ImGui" STATIC ${IMGUI_SOURCES})
 target_include_directories("ImGui" PUBLIC ${IMGUI_PATH} ${IMGUI_PATH}/backends  ext/glfw/include  ext/glfw/deps PRIVATE ext/glfw/src 
 )
-
 # Link Targets
 target_compile_options(${PROJECT_NAME} PRIVATE "${OpenMP_CXX_FLAGS}")
 target_link_libraries(${PROJECT_NAME} PUBLIC ImGui glfw glad ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} libglew_static 
-    PRIVATE "${OpenMP_CXX_FLAGS}" 
-)
-
-target_link_libraries("gui" PUBLIC glfw ImGui glad ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} libglew_static 
-    PRIVATE "${OpenMP_CXX_FLAGS}"
+    PRIVATE OpenMP::OpenMP_CXX
 )

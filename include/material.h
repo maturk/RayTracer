@@ -8,7 +8,6 @@
 
 RAYTRACER_NAMESPACE_BEGIN
 
-
 // Material abstract class
 class Material {
     public:
@@ -105,7 +104,6 @@ class dielectric : public Material {
             r0 = r0*r0;
             return r0 + (1-r0)*pow((1 - cosine),5);
         }
-
 };
 
 RAYTRACER_NAMESPACE_END

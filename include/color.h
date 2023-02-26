@@ -29,7 +29,6 @@ void save_image(Image image) {
         }
     }
     out.close();
-
 }
 
 RAYTRACER_NAMESPACE_END

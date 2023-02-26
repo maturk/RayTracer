@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "gui.h"
+#include "configs.h"
 #include <iostream>
 
 RAYTRACER_NAMESPACE_BEGIN

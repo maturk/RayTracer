@@ -1,6 +1,7 @@
 #ifndef GUI_H
 #define GUI_H
 
+#include "configs.h"
 // Bring in OpenGL
 // Windows
 #ifdef WIN32
@@ -22,6 +23,7 @@
 
 // Linux
 #ifdef linux
+#define GLEW_STATIC
 #include <GL/glew.h>
 #endif
 

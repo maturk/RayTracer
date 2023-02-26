@@ -93,6 +93,8 @@ class GUI {
                 ImGui::SliderInt("Width", &image.m_surface.width, 1, 1920);
                 ImGui::SliderInt("Samples", &settings.samples_per_pixel, 1, 50); 
                 ImGui::SliderInt("Max depth", &settings.max_depth, 1, 20);  
+                ImGui::SliderInt("Num of random spheres", &settings.num_objects, 1, 40);
+                settings.world = random_scene(settings.num_objects);
             }
             ImGui::Checkbox("Gamma correction", &settings.gamma); 
             ImGui::Text("Render image with new settings: "); 

@@ -12,16 +12,6 @@
 
 RAYTRACER_NAMESPACE_BEGIN
 
-// Settings
-struct Settings {
-     float aspect_ratio = 3.0 / 2.0;
-     int image_width = 400;
-     int image_height = static_cast<int>(image_width / aspect_ratio);
-     int samples_per_pixel = 1;
-     int max_depth = 50;
-     bool gamma = true;
-};
-
 // Usings
 using std::shared_ptr;
 using std::make_shared;
