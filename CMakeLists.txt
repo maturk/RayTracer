@@ -9,29 +9,6 @@ project(RayTracer)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 
-# OpenMP parallelisation
-if(APPLE)
-    set(CMAKE_C_COMPILER "/usr/bin/clang")
-    set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
-
-    if(CMAKE_C_COMPILER_ID MATCHES "Clang\$")
-        set(OpenMP_C_FLAGS "-Xpreprocessor -fopenmp")
-        set(OpenMP_C_LIB_NAMES "omp")
-        set(OpenMP_omp_LIBRARY omp)
-    endif()
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang\$")
-        set(OpenMP_CXX_FLAGS "-Xclang -fopenmp")
-        set(OpenMP_CXX_LIB_NAMES "omp")
-        set(OpenMP_omp_LIBRARY omp)
-    endif()
-endif()
-find_package(OpenMP REQUIRED)
-if (OPENMP_FOUND)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-endif()
-
 # Eigen 
 # Manually set Eigen paths to local Eigen folder
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/ext/eigen/cmake/)
@@ -50,6 +27,30 @@ add_subdirectory(ext/glfw)
 add_subdirectory(ext/glad)
 add_subdirectory(ext/glew-cmake)
 
+# OpenMP parallelisation
+if(APPLE)
+    set(CMAKE_C_COMPILER "/opt/homebrew/opt/llvm/bin/clang")
+    set(CMAKE_CXX_COMPILER "/opt/homebrew/opt/llvm/bin/clang++")
+
+    if(CMAKE_C_COMPILER_ID MATCHES "Clang\$")
+        set(OpenMP_C_FLAGS "-Xpreprocessor -fopenmp")
+        set(OpenMP_C_LIB_NAMES "omp")
+        set(OpenMP_omp_LIBRARY omp)
+    endif()
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang\$")
+        set(OpenMP_CXX_FLAGS "-fopenmp")
+        set(OpenMP_CXX_LIB_NAMES "omp")
+        set(OpenMP_omp_LIBRARY omp)
+    endif()
+endif()
+find_package(OpenMP REQUIRED)
+if (OPENMP_FOUND)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}${OpenMP_CXX_FLAGS}")
+    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}${OpenMP_EXE_LINKER_FLAGS}")
+endif()
+
+
 # Main program
 file(GLOB SOURCES "src/*.cpp" "src/*.h" "include/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES})
@@ -63,7 +64,7 @@ add_library("ImGui" STATIC ${IMGUI_SOURCES})
 target_include_directories("ImGui" PUBLIC ${IMGUI_PATH} ${IMGUI_PATH}/backends  ext/glfw/include  ext/glfw/deps PRIVATE ext/glfw/src 
 )
 # Link Targets
-target_compile_options(${PROJECT_NAME} PRIVATE "${OpenMP_CXX_FLAGS}")
+target_compile_options(${PROJECT_NAME} PRIVATE "${CMAKE_CXX_FLAGS}")
 target_link_libraries(${PROJECT_NAME} PUBLIC ImGui glfw glad ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} libglew_static 
-    PRIVATE OpenMP::OpenMP_CXX
+    PRIVATE "${CMAKE_CXX_FLAGS}"
 )
